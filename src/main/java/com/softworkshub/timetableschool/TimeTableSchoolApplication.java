@@ -8,6 +8,7 @@ public class TimeTableSchoolApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(TimeTableSchoolApplication.class, args);
+        System.out.println("Hello Coder !");
     }
 
 }

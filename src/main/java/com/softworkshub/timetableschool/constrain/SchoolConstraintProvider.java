@@ -14,7 +14,8 @@ public class SchoolConstraintProvider implements ConstraintProvider {
         return new Constraint[] {
                 teacherConflict(factory),
                 roomConflict(factory),
-                classConflict(factory)
+                classConflict(factory),
+                unassignSubject(factory)
         };
     }
 
@@ -39,4 +40,16 @@ public class SchoolConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Lesson::getClassName))
                 .penalize("Class conflict", HardSoftScore.ONE_HARD);
     }
+
+    /**
+     *  HARD CONSTRAINTS : Every Subject must assign
+     *  */
+
+    private Constraint unassignSubject(ConstraintFactory factory) {
+        return factory.forEach(Lesson.class)
+                .filter(lesson -> lesson.getTimeslot() == null || lesson.getRoom() == null)
+                .penalize("Unassign Subject", HardSoftScore.ONE_HARD);
+    }
+
+
 }

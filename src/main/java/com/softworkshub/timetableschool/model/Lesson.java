@@ -22,7 +22,7 @@ public class Lesson {
 
     private Teacher teacher; // <-- new field
 
-    @PlanningVariable(valueRangeProviderRefs = {"roomRange"})
+//    @PlanningVariable(valueRangeProviderRefs = {"roomRange"})
     private Room room;
 
     @PlanningVariable(valueRangeProviderRefs = {"timeslotRange"})

@@ -49,6 +49,11 @@ public class ScheduleService {
         List<Lesson> lessons = new ArrayList<>();
         long id = 1L;
         for (String cls : req.getClasses()) {
+            String fixedRoomName = req.getClassRoomMap().get(cls);
+            Room fixedRoom = rooms.stream()
+                    .filter(r -> r.getName().equalsIgnoreCase(fixedRoomName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Room not found: " + fixedRoomName));
             for (String subj : req.getClassSubjects().get(cls)) {
                 Teacher teacher = teachers.stream()
                         .filter(t -> t.getSubject() != null && t.getSubject().equalsIgnoreCase(subj)) // ✅ null-safe
@@ -69,12 +74,13 @@ public class ScheduleService {
                         cls,
                         subject,
                         subject.isFiller() ? null : teacher,
-                        null,
+                        fixedRoom,
                         null
                 ));
             }
         }
 
+        // Create problem
         Timetable problem = new Timetable();
         problem.setRoomList(rooms);
         problem.setTeacherList(teachers);
@@ -88,8 +94,8 @@ public class ScheduleService {
                         .withSolutionClass(Timetable.class)
                         .withEntityClasses(Lesson.class)
                         .withConstraintProviderClass(SchoolConstraintProvider.class)
-                        //.withTerminationConfig(new TerminationConfig()
-                         //       .withSecondsSpentLimit(1000L)));
+                        .withTerminationConfig(new TerminationConfig()
+                               .withSecondsSpentLimit(10L))
                 );
 
         Solver<Timetable> solver = factory.buildSolver();
